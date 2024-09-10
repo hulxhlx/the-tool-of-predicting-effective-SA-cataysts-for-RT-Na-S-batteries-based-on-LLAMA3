@@ -9,6 +9,13 @@ To install the required dependencies, run the following command:
 pip install -r requirements.txt
 ```
 
+## Data and Resources
+
+The necessary datasets and generated files required to run the scripts are available for download via the following link:
+- **Download Link for Resources**: [Download resources.zip](https://pan.baidu.com/s/1gbn2l_PA1FMH4YHe7Xd31w)
+- **Extraction Code**: `lgb3`
+
+This package includes all the datasets and any additional files required for processing. Make sure to download and extract the contents into the project directory before running the scripts.
 ## Usage
 Each script in this repository serves a specific function as part of the workflow. Follow the steps below to use each script.
 

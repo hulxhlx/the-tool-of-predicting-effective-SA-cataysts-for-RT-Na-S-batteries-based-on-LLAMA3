@@ -1,0 +1,4 @@
+ollama
+numpy
+pandas
+sklearn

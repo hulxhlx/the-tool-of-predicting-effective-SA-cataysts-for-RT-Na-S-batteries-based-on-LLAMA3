@@ -19,6 +19,19 @@ This package includes all the datasets and any additional files required for pro
 ## Usage
 Each script in this repository serves a specific function as part of the workflow. Follow the steps below to use each script.
 
+### Use text-embedding-3-small
+It is recommended to use Spyder to open and run the code in sections.
+```bash
+python textembedding3.py
+```
+
+### Use gpt4o
+It is recommended to use Spyder to open and run the code in sections.
+```bash
+python gpt4o.py
+```
+
+
 ### Converting Excel Tables to Embeddings
 Convert your Excel data into usable embeddings with the following command:
 

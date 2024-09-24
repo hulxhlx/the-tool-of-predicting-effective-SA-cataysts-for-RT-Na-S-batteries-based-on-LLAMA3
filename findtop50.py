@@ -1,126 +1,78 @@
 # -*- coding: utf-8 -*-
 """
-Created on Thu Aug  8 10:51:02 2024
+Created on Fri Sep 13 11:15:08 2024
 
 @author: Lingxiang
 """
+
 from sklearn.metrics.pairwise import cosine_similarity
 
 import pandas as pd
 import ollama
 import numpy as np
+from numpy.linalg import norm
 
 
-# =============================================================================
-# 
-# # 读取.xlsx文件
-# df = pd.read_excel('SA_new_all.xlsx')
-# print(df.columns)
-# 
-# # 假设B列包含需要转换的文本
-# texts = df['Column2'].tolist()
-# 
-# # 初始化一个空列表，用于存储嵌入向量
-# embeddings = []
-# 
-# for text in texts:
-#     response = ollama.embeddings(model="llama3", prompt=text)
-#     embedding = response["embedding"]  # 提取嵌入向量
-#     embeddings.append(embedding)
-#     print(len(embedding))
-# 
-# embeddings_array = np.array(embeddings)
-# np.save('SA.npy', embeddings_array)
-# 
-# 
-# print(embeddings_array.shape)
-# 
-# 
-# # 将嵌入向量转换为numpy数组，并添加到数据框中
-# embeddings_str = [' '.join(map(str, embedding)) for embedding in embeddings]
-# 
-# # 添加一个新列用于存储嵌入向量
-# df['Embedding'] = embeddings_str
-# =============================================================================
+# Function to normalize values between 0 and 1
+def normalize_0_1(values):
+    min_val = np.min(values)
+    max_val = np.max(values)
+    return (values - min_val) / (max_val - min_val)
 
-
-# =============================================================================
-# 
-# # 读取.xlsx文件
-# df = pd.read_excel('./prediction dataset.xlsx')
-# 
-# # 假设B列包含需要转换的文本
-# texts = df['Column2'].tolist()
-# 
-# # 初始化一个空列表，用于存储嵌入向量
-# embeddings = []
-# 
-# for text in texts:
-#     response = ollama.embeddings(model="llama3", prompt=text)
-#     embedding = response["embedding"]  # 提取嵌入向量
-#     embeddings.append(embedding)
-#     print(len(embedding))
-# 
-# embeddings_array = np.array(embeddings)
-# np.save('prediction.npy', embeddings_array)
-# 
-# embeddings_array = np.load('./SA.npy')
-# 
-# =============================================================================
-
-
-#df = pd.read_excel('./prediction dataset.xlsx')
-
+# Load the prediction embeddings
 prediction = np.load('./prediction.npy')
-embeddings_array = np.load('./SA.npy')
+
+# Load the embeddings and t-SNE reduced arrays
+embeddings_array = np.load('./240820-3.1.npy')
+reduced_array = np.load('240820-3.1—tsne2.npy')
+
+# Initialize empty lists to store the results
 top50indices = [] 
+file_path_1 = './dataset_240820.xlsx'
 
+# Read the Excel file containing paper titles and abstracts
+df_dataset = pd.read_excel(file_path_1)
+dataset_papername = df_dataset['Column1'].tolist()  # Paper titles
+dataset_paperabs = df_dataset['Column2'].tolist()   # Paper abstracts
 
-for predict in prediction:
+# Initialize lists for storing results
+papername = []
+papernumber = []
+papersim = []
+paperabs = []
+tsnex = []
+tsney = []
 
-
+# For each prediction embedding
+for j, predict in enumerate(prediction):
     
-    # 计算查询嵌入向量与所有嵌入向量的余弦相似度
+    # Calculate cosine similarity between the query embedding and all embeddings
     similarities = cosine_similarity([predict], embeddings_array)[0]
-    # 找到最相似的文本
-    most_similar_indices = np.argsort(similarities)[-50:][::-1]
-    top50indices.append(most_similar_indices)
-    print(most_similar_indices)
-# =============================================================================
-# top50indices_str = [' '.join(map(str, indice)) for indice in top50indices]
-# df['top50indices'] = top50indices_str
-# df.to_excel('pred_top50indices.xlsx', index=False)
-# =============================================================================
-# =============================================================================
-#     most_similar_text = texts[most_similar_index]
-#     most_similar_score = similarities[0][most_similar_index]
-#     
-#     print(f"最相似的文本是: {most_similar_text}")
-#     print(f"相似度得分: {most_similar_score:.4f}")
-# =============================================================================
+    
+    # Normalize the similarity scores between 0 and 1
+    similarities_norm = normalize_0_1(similarities) 
 
+    # Find the 100 most similar texts
+    most_similar_indices = np.argsort(similarities_norm)[-100:][::-1]
+    
+    # Append results for each similar paper
+    for i in most_similar_indices:
+        papername.append(dataset_papername[i])  # Paper title
+        paperabs.append(dataset_paperabs[i])    # Paper abstract
+        papernumber.append(j)                   # Prediction number
+        papersim.append(similarities_norm[i])   # Normalized similarity score
+        tsnex.append(reduced_array[i+10][0])    # t-SNE x-coordinate
+        tsney.append(reduced_array[i+10][1])    # t-SNE y-coordinate
 
+# Create a DataFrame to store the results
+df = pd.DataFrame({
+    'papername': papername,               # Paper title
+    'papernumber': papernumber,           # Prediction number
+    'paper_similarity': papersim,         # Similarity score
+    'tsnex': tsnex,                       # t-SNE x-coordinate
+    'tsney': tsney,                       # t-SNE y-coordinate
+    'paper_abstract': paperabs            # Paper abstract
+})
 
-# =============================================================================
-# for text in texts:
-#     response = ollama.embeddings(model="llama3", prompt=text)
-#     query_embedding = response["embedding"]  # 提取嵌入向量
-# 
-#     
-#     # 计算查询嵌入向量与所有嵌入向量的余弦相似度
-#     similarities = cosine_similarity([query_embedding], embeddings_array)[0]
-#     # 找到最相似的文本
-#     most_similar_indices = np.argsort(similarities)[-50:][::-1]
-#     top50indices.append(most_similar_indices)
-# top50indices_str = [' '.join(map(str, indice)) for indice in top50indices]
-# df['top50indices'] = top50indices_str
-# df.to_excel('pred_top50indices.xlsx', index=False)
-# # =============================================================================
-# #     most_similar_text = texts[most_similar_index]
-# #     most_similar_score = similarities[0][most_similar_index]
-# #     
-# #     print(f"最相似的文本是: {most_similar_text}")
-# #     print(f"相似度得分: {most_similar_score:.4f}")
-# # =============================================================================
-# 
-# =============================================================================
+# Save the DataFrame to an Excel file
+df.to_excel('pred_top50indices_cos_3.1.xlsx', index=False)

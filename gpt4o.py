@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Sat Aug 10 14:38:26 2024
 
-@author: Lingxiang
-"""
 
 import pandas as pd
 from langchain_community.embeddings import OpenAIEmbeddings
@@ -12,7 +8,7 @@ df_all = pd.read_excel ("./dataset_240820.xlsx", header = None).drop_duplicates(
 df_pre = pd.read_excel ("prediction dataset.xlsx").drop_duplicates()
 
 embedding_model = "text-embedding-3-small"
-openai_api_key = "sk-proj-fuzKGig2v3GR1nOS8WrJT3BlbkFJlehB6npoULxZkAc9hCW2"
+openai_api_key = "your api-key "
 embeddings = OpenAIEmbeddings(model = embedding_model, openai_api_key = openai_api_key)
 
 texts = df_all.iloc[:, 1].tolist()  # Abstract -> Embedding (vectorize)
@@ -91,7 +87,7 @@ for i in range(df_pre.shape[0]):
     dfs_results.append(df_results)
   #%% 
 from openai import OpenAI
-client = OpenAI(api_key = "sk-proj-fuzKGig2v3GR1nOS8WrJT3BlbkFJlehB6npoULxZkAc9hCW2")
+client = OpenAI(api_key = "your api-key")
 completion = client.chat.completions.create(
   model="gpt-4o",
   messages=[

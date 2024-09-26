@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Tue Sep 10 15:55:34 2024
 
-@author: Lingxiang
-"""
 
 import ollama
 import time

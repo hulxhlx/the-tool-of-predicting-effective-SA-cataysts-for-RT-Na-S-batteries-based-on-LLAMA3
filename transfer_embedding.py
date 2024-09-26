@@ -1,9 +1,5 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Thu Aug  8 10:51:02 2024
 
-@author: Lingxiang
-"""
 
 import pandas as pd
 import ollama

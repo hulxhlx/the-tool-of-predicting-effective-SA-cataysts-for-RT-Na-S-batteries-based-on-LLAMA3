@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Created on Fri Sep 13 11:15:08 2024
-
-@author: Lingxiang
-"""
 
 from sklearn.metrics.pairwise import cosine_similarity
 
@@ -24,7 +19,7 @@ prediction = np.load('./prediction.npy')
 
 # Load the embeddings and t-SNE reduced arrays
 embeddings_array = np.load('./240820-3.1.npy')
-reduced_array = np.load('240820-3.1—tsne2.npy')
+reduced_array = np.load('240820-3.1-tsne.npy')
 
 # Initialize empty lists to store the results
 top50indices = [] 
